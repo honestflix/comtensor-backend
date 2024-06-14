@@ -21,7 +21,7 @@
 1. Clone the repository.
 
     ```bash
-    git clone https://github.com/Comtensor/comtensor.git
+    git clone https://github.com/honestflix/comtensor-backend.git
     cd comtensor
     ```
 
