@@ -8,7 +8,7 @@ from crossvals.image_alchemy.alchemy import ImageAlchemyCrossVal
 from crossvals.sybil.sybil import SybilCrossVal
 from crossvals.openkaito.openkaito import OpenkaitoCrossVal
 from crossvals.itsai.itsai import ItsaiCrossVal
-# from crossvals.niche.niche import NicheCrossVal
+from crossvals.niche.niche import NicheCrossVal
 from crossvals.wombo.wombo import WomboCrossVal
 from crossvals.wombo.protocol import ImageGenerationClientInputs
 from crossvals.fractal.fractal import FractalCrossVal
@@ -22,6 +22,7 @@ from crossvals.omegalabs.omegalabs import OmegalabsCrossVal
 from crossvals.vision.vision import VisionCrossVal
 from crossvals.omron.omron import OmronCrossVal
 from crossvals.sturdy.sturdy import SturdyCrossVal
+from crossvals.pretrain.pretrain import PretrainCrossVal
 
 from fastapi import UploadFile, File, HTTPException, Body
 import asyncio
@@ -70,9 +71,9 @@ class OpenkaitoItem(BaseModel):
 class ItsaiItem(BaseModel):
     texts: List[str]
 
-# class NicheItem(BaseModel):
-#     model_name: str
-#     prompt: str
+class NicheItem(BaseModel):
+    model_name: str
+    prompt: str
 
 class WomboItem(BaseModel):
     watermark: bool
@@ -127,9 +128,9 @@ async def openkaito_search(item: OpenkaitoItem):
 async def llm_detection(item: ItsaiItem):
     return await itsai_crossval.run(item.texts)
 
-# @app.post("/niche/", tags=["Mainnet"])
-# def niche_generation(item: NicheItem):
-#     return niche_crossval.run(item)
+@app.post("/niche/", tags=["Mainnet"])
+def niche_generation(item: NicheItem):
+    return niche_crossval.run(item)
 
 @app.post("/wombo/", tags=["Mainnet"])
 async def generate(item: WomboItem):
@@ -188,13 +189,17 @@ async def sturdy():
 async def prompting(item: PropmtItem):
     return await promtingCrossval.run(item)
 
+@app.post("/pretrain/", tags=["Mainnet"])
+async def pretrain():
+    return await pretrain_crossval.run()
+
 subtensor = bt.subtensor(network = "local")
 promtingCrossval = PromtingCrossValidator(subtensor=subtensor)
 imagealchemy_crossval = ImageAlchemyCrossVal(subtensor=subtensor)
 sybil_crossval = SybilCrossVal(subtensor=subtensor)
 openkaito_crossval = OpenkaitoCrossVal(subtensor=subtensor)
 itsai_crossval = ItsaiCrossVal(subtensor=subtensor)
-# niche_crossval = NicheCrossVal(subtensor=subtensor)
+niche_crossval = NicheCrossVal(subtensor=subtensor)
 wombo_crossval = WomboCrossVal(subtensor=subtensor)
 fractal_crossval = FractalCrossVal(subtensor=subtensor)
 llmdefender_crossval = LLMDefenderCrossVal(subtensor=subtensor)
@@ -207,3 +212,4 @@ cortex_crossval = CortexCrossVal(subtensor=subtensor)
 vision_crossval = VisionCrossVal(subtensor=subtensor)
 omron_crossval = OmronCrossVal(subtensor=subtensor)
 sturdy_crossval = SturdyCrossVal(subtensor=subtensor)
+pretrain_crossval = PretrainCrossVal(subtensor=subtensor)
